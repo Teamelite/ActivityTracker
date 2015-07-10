@@ -1,0 +1,71 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Teamelite
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+package com.mcteamelite.activity_tracker.date_checker;
+
+import com.mcteamelite.activity_tracker.ActivityTracker;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.sql.Date;
+
+/**
+ * @name ActivityTracker
+ * @author Kieron Wiltshire
+ * @contact kieron.wiltshire@outlook.com
+ */
+public class DateChecker extends BukkitRunnable {
+
+    // Singleton
+    private static DateChecker instance;
+
+    /**
+     * Get the DateChecker instance
+     *
+     * @return Singleton
+     */
+    public static DateChecker getInstance() {
+        return instance != null ? instance : (instance = new DateChecker());
+    }
+
+    /**
+     * Constructs a DateChecker instance
+     */
+    private DateChecker() {
+        this.runTaskTimer(ActivityTracker.getInstance(), 0L, 20L);
+    }
+
+    @Override
+    public void run() {
+        Date current = new Date(System.currentTimeMillis());
+        Date old = new Date(System.currentTimeMillis() - 1000);
+
+        /**
+         * If the date a second ago, doesn't match the current date
+         * then, the date has changed. (It must be 12pm)
+         */
+        if (!current.equals(old)) {
+            Bukkit.getPluginManager().callEvent(new DateChangeEvent(old, current));
+        }
+    }
+}

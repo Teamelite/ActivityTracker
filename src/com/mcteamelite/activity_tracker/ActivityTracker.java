@@ -25,12 +25,14 @@ package com.mcteamelite.activity_tracker;
 
 import com.mcteamelite.activity_tracker.backend.TrackerLog;
 import com.mcteamelite.activity_tracker.backend.TrackerUser;
+import com.mcteamelite.activity_tracker.date_checker.DateChangeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.persistence.PersistenceException;
@@ -44,6 +46,18 @@ import java.util.*;
  */
 public class ActivityTracker extends JavaPlugin implements Listener {
 
+    // Singleton
+    private static ActivityTracker instance;
+
+    /**
+     * Get the DateChecker instance
+     *
+     * @return Singleton
+     */
+    public static ActivityTracker getInstance() {
+        return instance;
+    }
+
     private HashMap<TrackerUser, Long> joined;
 
     /**
@@ -51,6 +65,9 @@ public class ActivityTracker extends JavaPlugin implements Listener {
      * enabled by Bukkit.
      */
     public void onEnable() {
+        // Instantiate
+        ActivityTracker.instance = this;
+
         this.joined = new HashMap<TrackerUser, Long>();
 
         // Register the Listener
@@ -65,9 +82,7 @@ public class ActivityTracker extends JavaPlugin implements Listener {
 
         // Iterate through every online player, and register them
         // to the tracker.
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            this.register(player);
-        }
+        for (Player player : Bukkit.getOnlinePlayers()) this.track(player);
     }
 
     /**
@@ -76,16 +91,30 @@ public class ActivityTracker extends JavaPlugin implements Listener {
      */
     public void onDisable() {
         // Unregister every online player from the tracker.
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            this.unregister(player);
-        }
+        for (Player player : Bukkit.getOnlinePlayers()) this.save(player);
     }
 
     @EventHandler
-    private void onJoin(PlayerJoinEvent event) { this.register(event.getPlayer()); }
+    private void onJoin(PlayerJoinEvent event) { this.track(event.getPlayer()); }
 
     @EventHandler
-    private void onQuit(PlayerQuitEvent event) { this.unregister(event.getPlayer()); }
+    private void onQuit(PlayerQuitEvent event) { this.save(event.getPlayer()); }
+
+    @EventHandler
+    private void onDateChange(DateChangeEvent event) {
+        for (Iterator<TrackerUser> iter = this.joined.keySet().iterator(); iter.hasNext();) {
+            TrackerUser user = iter.next();
+
+            // Save the user's data for that day
+            this.save(user, event.getOldDate());
+
+            // Once the user's data has been saved, we want to track them again for
+            // the new date.
+            if (Bukkit.getPlayer(user.getUniqueId()) != null) {
+                this.track(Bukkit.getPlayer(user.getUniqueId()));
+            }
+        }
+    }
 
     /**
      * @param player the player to use as a reference.
@@ -103,7 +132,7 @@ public class ActivityTracker extends JavaPlugin implements Listener {
      *
      * @param player
      */
-    private void register(Player player) {
+    private void track(Player player) {
         // Attempt to find the User.
         // Execute the query asynchronously
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
@@ -125,29 +154,48 @@ public class ActivityTracker extends JavaPlugin implements Listener {
                 // Save the TrackerUser model to the database.
                 getDatabase().save(user);
 
-                // Store the User model within the HashMap to use within the TrackerLog.
-                joined.put(user, System.currentTimeMillis());
+                synchronized (joined) {
+                    // Store the User model within the HashMap to use within the TrackerLog.
+                    joined.put(user, System.currentTimeMillis());
+                }
             }
         });
     }
 
     /**
-     * Unregister a player from the tracker.
+     * Saves the track of a player.
      *
      * @param player
      */
-    private void unregister(Player player) {
+    private void save(Player player) {
+        this.save(this.getUserFromPlayer(player), new Date(System.currentTimeMillis()));
+    }
+
+    /**
+     * Saves the track of a player.
+     *
+     * @param player
+     * @param date
+     */
+    private void save(Player player, Date date) {
+        this.save(this.getUserFromPlayer(player), date);
+    }
+
+    /**
+     * Saves the track of a user.
+     *
+     * @param user
+     */
+    private void save(TrackerUser user, Date date) {
         // Attempt to get the User.
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
             @Override
             public void run() {
-                TrackerUser user = getUserFromPlayer(player);
-
                 // If the User exists then get their track log.
                 if (user != null) {
                     TrackerLog log = getDatabase().find(TrackerLog.class).where()
                             .eq("user_id", user.getId())
-                            .eq("date", new Date(System.currentTimeMillis()))
+                            .eq("date", date)
                             .findUnique();
 
                     long time = System.currentTimeMillis() - joined.get(user);
@@ -166,8 +214,10 @@ public class ActivityTracker extends JavaPlugin implements Listener {
                     // Save the TrackerLog model to the database.
                     getDatabase().save(log);
 
-                    // Remove the TrackerLog model from the HashMap.
-                    joined.remove(user);
+                    synchronized (joined) {
+                        // Remove the TrackerLog model from the HashMap.
+                        joined.remove(user);
+                    }
                 }
             }
         });
