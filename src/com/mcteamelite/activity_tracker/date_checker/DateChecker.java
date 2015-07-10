@@ -57,14 +57,14 @@ public class DateChecker extends BukkitRunnable {
 
     @Override
     public void run() {
-        Date current = new Date(System.currentTimeMillis());
         Date old = new Date(System.currentTimeMillis() - 1000);
+        Date current = new Date(System.currentTimeMillis());
 
         /**
          * If the date a second ago, doesn't match the current date
          * then, the date has changed. (It must be 12pm)
          */
-        if (!current.equals(old)) {
+        if (!old.equals(current)) {
             Bukkit.getPluginManager().callEvent(new DateChangeEvent(old, current));
         }
     }
