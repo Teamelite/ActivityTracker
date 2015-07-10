@@ -119,9 +119,11 @@ public class ActivityTracker extends JavaPlugin implements Listener {
         // If the User doesn't exist then create it, otherwise update the player's name.
         if (user == null) {
             user = new TrackerUser();
-                user.setName(player.getName());
                 user.setUniqueId(player.getUniqueId());
         }
+
+        // The name should be updated regardless to compensate for Mojang's name change update.
+        user.setName(player.getName());
 
         // Save the TrackerUser model to the database.
         this.getDatabase().save(user);
