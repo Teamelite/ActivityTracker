@@ -10,8 +10,13 @@ database:
   username: root
   isolation: SERIALIZABLE
   driver: com.mysql.jdbc.Driver
-  password: ''
-  url: jdbc:mysql://localhost:3306/activitytracker
+  password: secret
+  url: jdbc:mysql://{{HOST}}:{{PORT}}/{{DATABASE}}
+  
+  {{HOST}}, {{PORT}} and {{DATABASE}} aren't templates. You must manually enter the details yourself.
+  So something like:
+  url: jdbc:mysql://localhost:3306/minecraft
+ 
 ```
 
 The database currently stores a user's play time in milliseconds. This should be converted to minutes and then be used to determine a player's activity through the use of some commands or maybe a fancy web-interface.
