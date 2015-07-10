@@ -12,9 +12,10 @@ database:
   driver: com.mysql.jdbc.Driver
   password: secret
   url: jdbc:mysql://{{HOST}}:{{PORT}}/{{DATABASE}}
-  
-  {{HOST}}, {{PORT}} and {{DATABASE}} aren't templates. You must manually enter the details yourself.
-  So something like:
+```
+  {{HOST}}, {{PORT}} and {{DATABASE}} aren't templates. 
+  You must manually enter the details yourself. Here is an example:
+```
   url: jdbc:mysql://localhost:3306/minecraft
  
 ```
