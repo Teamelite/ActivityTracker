@@ -57,6 +57,13 @@ public class TrackerLog {
     public Date getDate() { return this.date; }
 
     /**
+     * Set the time played in milliseconds.
+     *
+     * @param time
+     */
+    public void setTime(long time) { this.time = time; }
+
+    /**
      * @return the time played in milliseconds.
      */
     public long getTime() { return this.time; }

@@ -38,9 +38,14 @@ public class TrackerUser {
     }
 
     /**
+     * @return the id of the record.
+     */
+    public long getId() { return this.id; }
+
+    /**
      * Set the name of the player.
      *
-     * @param name The name of the player.
+     * @param name the name of the player.
      */
     public void setName(String name) { this.name = name; }
 
