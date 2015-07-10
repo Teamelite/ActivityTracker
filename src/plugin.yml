@@ -1,0 +1,4 @@
+name: ActivityTracker
+version: 1.0.0
+author: [ Kieron Wiltshire ]
+main: com.mcteamelite.activity_tracker.ActivityTracker
