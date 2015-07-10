@@ -1,5 +1,30 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Teamelite
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package com.mcteamelite.activity_tracker;
 
+import com.avaje.ebeaninternal.api.SpiEbeanServer;
+import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import com.mcteamelite.activity_tracker.backend.TrackerLog;
 import com.mcteamelite.activity_tracker.backend.TrackerUser;
 import org.bukkit.Bukkit;
@@ -10,11 +35,15 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.persistence.PersistenceException;
 import java.sql.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
+/**
+ * @name ActivityTracker
+ * @author Kieron Wiltshire
+ * @contact kieron.wiltshire@outlook.com
+ */
 public class ActivityTracker extends JavaPlugin implements Listener {
 
     private HashMap<TrackerUser, Long> joined;
@@ -28,6 +57,13 @@ public class ActivityTracker extends JavaPlugin implements Listener {
 
         // Register the Listener
         Bukkit.getPluginManager().registerEvents(this, this);
+
+        // Ensure the backend is in use.
+        try {
+            this.getDatabase().find(TrackerUser.class).findRowCount();
+        } catch (PersistenceException ex) {
+            this.installDDL();
+        }
 
         // Iterate through every online player, and register them
         // to the tracker.
@@ -62,7 +98,7 @@ public class ActivityTracker extends JavaPlugin implements Listener {
      * @param player the player to use as a reference.
      * @return the TrackerUser object associated with the Player.
      */
-    private TrackerUser getUserFromPlayer(Player player) {
+    public TrackerUser getUserFromPlayer(Player player) {
         for (TrackerUser user : this.joined.keySet()) {
             if (user.getUniqueId().equals(player.getUniqueId())) return user;
         }
@@ -77,14 +113,14 @@ public class ActivityTracker extends JavaPlugin implements Listener {
     private void register(Player player) {
         // Attempt to find the User.
         TrackerUser user = this.getDatabase().find(TrackerUser.class).where()
-                .eq("uuid", player.getUniqueId())
+                .eq("unique_id", player.getUniqueId())
                 .findUnique();
 
         // If the User doesn't exist then create it, otherwise update the player's name.
         if (user == null) {
-            user = new TrackerUser(player.getName(), player.getUniqueId());
-        } else {
-            user.setName(player.getName());
+            user = new TrackerUser();
+                user.setName(player.getName());
+                user.setUniqueId(player.getUniqueId());
         }
 
         // Save the TrackerUser model to the database.
@@ -106,7 +142,7 @@ public class ActivityTracker extends JavaPlugin implements Listener {
         // If the User exists then get their track log.
         if (user != null) {
             TrackerLog log = this.getDatabase().find(TrackerLog.class).where()
-                    .eq("id", user.getId())
+                    .eq("user_id", user.getId())
                     .eq("date", new Date(System.currentTimeMillis()))
                     .findUnique();
 
@@ -115,7 +151,10 @@ public class ActivityTracker extends JavaPlugin implements Listener {
             // If the log doesn't exist, then create a new one, otherwise
             // append the time onto the old one.
             if (log == null) {
-                log = new TrackerLog(user, new Date(System.currentTimeMillis()), time);
+                log = new TrackerLog();
+                    log.setUser(user);
+                    log.setDate(new Date(System.currentTimeMillis()));
+                    log.setTime(time);
             } else {
                 log.setTime(log.getTime() + time);
             }
@@ -126,6 +165,17 @@ public class ActivityTracker extends JavaPlugin implements Listener {
             // Remove the TrackerLog model from the HashMap.
             this.joined.remove(user);
         }
+    }
+
+    @Override
+    public List<Class<?>> getDatabaseClasses() {
+        List<Class<?>> list = new ArrayList<Class<?>>();
+
+        // Add the classes to the list
+        list.add(TrackerUser.class);
+        list.add(TrackerLog.class);
+
+        return list;
     }
 
 }

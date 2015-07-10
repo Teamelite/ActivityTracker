@@ -1,10 +1,40 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Teamelite
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package com.mcteamelite.activity_tracker.backend;
 
 import com.avaje.ebean.validation.NotEmpty;
+import com.avaje.ebean.validation.NotNull;
 
 import javax.persistence.*;
 import java.sql.Date;
 
+/**
+ * @name ActivityTracker
+ * @author Kieron Wiltshire
+ * @contact kieron.wiltshire@outlook.com
+ */
+@Entity()
 @Table(name = "activitytracker_logs")
 public class TrackerLog {
 
@@ -17,14 +47,14 @@ public class TrackerLog {
     /**
      * The id of the user.
      */
-    @NotEmpty
-    @OneToMany(cascade = CascadeType.ALL)
+    @NotNull
+    @ManyToOne(targetEntity = TrackerUser.class)
     private TrackerUser user;
 
     /**
      * The date of the track.
      */
-    @NotEmpty
+    @NotNull
     private Date date;
 
     /**
@@ -35,21 +65,39 @@ public class TrackerLog {
     /**
      * Construct a TrackerLog object model to be used
      * for relational mapping.
-     *
-     * @param user the user to track.
-     * @param date the date to log.
-     * @param time the time played in milliseconds.
      */
-    public TrackerLog(TrackerUser user, Date date, long time) {
-        this.user = user;
-        this.date = date;
-        this.time = time;
-    }
+    public TrackerLog() {}
+
+    /**
+     * Set the id of the record.
+     *
+     * @param id
+     */
+    public void setId(long id) { this.id = id; }
+
+    /**
+     * @return the id of the record.
+     */
+    public long getId() { return this.id; }
+
+    /**
+     * Set the User of the record.
+     *
+     * @param user the TrackerUser object being tracked.
+     */
+    public void setUser(TrackerUser user) { this.user = user; }
 
     /**
      * @return the TrackerUser instance.
      */
     public TrackerUser getUser() { return this.user; }
+
+    /**
+     * Set the date of the record.
+     *
+     * @param date the track date.
+     */
+    public void setDate(Date date) { this.date = date; }
 
     /**
      * @return the track date.
