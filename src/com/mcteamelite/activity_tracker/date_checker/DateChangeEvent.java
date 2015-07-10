@@ -26,7 +26,7 @@ package com.mcteamelite.activity_tracker.date_checker;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.sql.Date;
+import java.util.Calendar;
 
 /**
  * @name ActivityTracker
@@ -39,7 +39,7 @@ public class DateChangeEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     // The old and the current date.
-    private Date old, current;
+    private Calendar old, current;
 
     /**
      * Constructs a new instance of a DateChangeEvent.
@@ -47,7 +47,7 @@ public class DateChangeEvent extends Event {
      * @param old the old date.
      * @param current the current date.
      */
-    public DateChangeEvent(Date old, Date current) {
+    public DateChangeEvent(Calendar old, Calendar current) {
         this.old = old;
         this.current = current;
     }
@@ -55,14 +55,14 @@ public class DateChangeEvent extends Event {
     /**
      * @return the old date.
      */
-    public Date getOldDate() {
+    public Calendar getOldDate() {
         return this.old;
     }
 
     /**
      * @return the current date.
      */
-    public Date getCurrentDate() {
+    public Calendar getCurrentDate() {
         return this.current;
     }
 

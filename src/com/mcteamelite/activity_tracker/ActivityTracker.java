@@ -26,6 +26,7 @@ package com.mcteamelite.activity_tracker;
 import com.mcteamelite.activity_tracker.backend.TrackerLog;
 import com.mcteamelite.activity_tracker.backend.TrackerUser;
 import com.mcteamelite.activity_tracker.date_checker.DateChangeEvent;
+import com.mcteamelite.activity_tracker.date_checker.DateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -83,6 +84,9 @@ public class ActivityTracker extends JavaPlugin implements Listener {
         // Iterate through every online player, and register them
         // to the tracker.
         for (Player player : Bukkit.getOnlinePlayers()) this.track(player);
+
+        // Instantiate a DateChecker instance
+        DateChecker.getInstance();
     }
 
     /**
@@ -106,7 +110,7 @@ public class ActivityTracker extends JavaPlugin implements Listener {
             TrackerUser user = iter.next();
 
             // Save the user's data for that day
-            this.save(user, event.getOldDate());
+            this.save(user, new Date(event.getOldDate().getTimeInMillis()));
 
             // Once the user's data has been saved, we want to track them again for
             // the new date.
