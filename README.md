@@ -1,6 +1,6 @@
 # ActivityTracker
 
-ActivityTracker is a Minecraft server modification built on the SpigotAPI platform. It is used to track a player's level of activity and determine if they're inactive.
+> ActivityTracker is a Minecraft server modification built on the SpigotAPI platform. It is used to track a player's level of activity and determine if they're inactive.
 
 ActivityTracker make's use of Bukkit's Database API which includes Ebean's Object Relational Mapping library.
 This means that a database must be configured within your [ bukkit.yml ] file.
@@ -20,4 +20,4 @@ database:
  
 ```
 
-The database currently stores a user's play time in milliseconds. This should be converted to minutes and then be used to determine a player's activity through the use of some commands or maybe a fancy web-interface.
+> The database currently stores a user's play time in milliseconds. This should be converted to minutes and then be used to determine a player's activity through the use of some commands or maybe a fancy web-interface.
