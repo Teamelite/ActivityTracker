@@ -23,8 +23,6 @@
  */
 package com.mcteamelite.activity_tracker;
 
-import com.avaje.ebeaninternal.api.SpiEbeanServer;
-import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import com.mcteamelite.activity_tracker.backend.TrackerLog;
 import com.mcteamelite.activity_tracker.backend.TrackerUser;
 import org.bukkit.Bukkit;
@@ -83,16 +81,11 @@ public class ActivityTracker extends JavaPlugin implements Listener {
         }
     }
 
+    @EventHandler
+    private void onJoin(PlayerJoinEvent event) { this.register(event.getPlayer()); }
 
     @EventHandler
-    private void onJoin(PlayerJoinEvent event) {
-        this.register(event.getPlayer());
-    }
-
-    @EventHandler
-    private void onQuit(PlayerQuitEvent event) {
-        this.unregister(event.getPlayer());
-    }
+    private void onQuit(PlayerQuitEvent event) { this.unregister(event.getPlayer()); }
 
     /**
      * @param player the player to use as a reference.
@@ -112,24 +105,30 @@ public class ActivityTracker extends JavaPlugin implements Listener {
      */
     private void register(Player player) {
         // Attempt to find the User.
-        TrackerUser user = this.getDatabase().find(TrackerUser.class).where()
-                .eq("unique_id", player.getUniqueId())
-                .findUnique();
+        // Execute the query asynchronously
+        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+            @Override
+            public void run() {
+                TrackerUser user = getDatabase().find(TrackerUser.class).where()
+                        .eq("unique_id", player.getUniqueId())
+                        .findUnique();
 
-        // If the User doesn't exist then create it, otherwise update the player's name.
-        if (user == null) {
-            user = new TrackerUser();
-                user.setUniqueId(player.getUniqueId());
-        }
+                // If the User doesn't exist then create it, otherwise update the player's name.
+                if (user == null) {
+                    user = new TrackerUser();
+                    user.setUniqueId(player.getUniqueId());
+                }
 
-        // The name should be updated regardless to compensate for Mojang's name change update.
-        user.setName(player.getName());
+                // The name should be updated regardless to compensate for Mojang's name change update.
+                user.setName(player.getName());
 
-        // Save the TrackerUser model to the database.
-        this.getDatabase().save(user);
+                // Save the TrackerUser model to the database.
+                getDatabase().save(user);
 
-        // Store the User model within the HashMap to use within the TrackerLog.
-        this.joined.put(user, System.currentTimeMillis());
+                // Store the User model within the HashMap to use within the TrackerLog.
+                joined.put(user, System.currentTimeMillis());
+            }
+        });
     }
 
     /**
@@ -139,34 +138,39 @@ public class ActivityTracker extends JavaPlugin implements Listener {
      */
     private void unregister(Player player) {
         // Attempt to get the User.
-        TrackerUser user = this.getUserFromPlayer(player);
+        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+            @Override
+            public void run() {
+                TrackerUser user = getUserFromPlayer(player);
 
-        // If the User exists then get their track log.
-        if (user != null) {
-            TrackerLog log = this.getDatabase().find(TrackerLog.class).where()
-                    .eq("user_id", user.getId())
-                    .eq("date", new Date(System.currentTimeMillis()))
-                    .findUnique();
+                // If the User exists then get their track log.
+                if (user != null) {
+                    TrackerLog log = getDatabase().find(TrackerLog.class).where()
+                            .eq("user_id", user.getId())
+                            .eq("date", new Date(System.currentTimeMillis()))
+                            .findUnique();
 
-            long time = System.currentTimeMillis() - this.joined.get(user);
+                    long time = System.currentTimeMillis() - joined.get(user);
 
-            // If the log doesn't exist, then create a new one, otherwise
-            // append the time onto the old one.
-            if (log == null) {
-                log = new TrackerLog();
-                    log.setUser(user);
-                    log.setDate(new Date(System.currentTimeMillis()));
-                    log.setTime(time);
-            } else {
-                log.setTime(log.getTime() + time);
+                    // If the log doesn't exist, then create a new one, otherwise
+                    // append the time onto the old one.
+                    if (log == null) {
+                        log = new TrackerLog();
+                        log.setUser(user);
+                        log.setDate(new Date(System.currentTimeMillis()));
+                        log.setTime(time);
+                    } else {
+                        log.setTime(log.getTime() + time);
+                    }
+
+                    // Save the TrackerLog model to the database.
+                    getDatabase().save(log);
+
+                    // Remove the TrackerLog model from the HashMap.
+                    joined.remove(user);
+                }
             }
-
-            // Save the TrackerLog model to the database.
-            this.getDatabase().save(log);
-
-            // Remove the TrackerLog model from the HashMap.
-            this.joined.remove(user);
-        }
+        });
     }
 
     @Override

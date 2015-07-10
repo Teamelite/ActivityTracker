@@ -23,9 +23,7 @@
  */
 package com.mcteamelite.activity_tracker.backend;
 
-import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
-import org.bukkit.entity.Player;
 
 import javax.persistence.*;
 import java.util.UUID;

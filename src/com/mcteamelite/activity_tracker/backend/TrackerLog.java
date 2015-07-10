@@ -23,7 +23,6 @@
  */
 package com.mcteamelite.activity_tracker.backend;
 
-import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 
 import javax.persistence.*;
