@@ -14,7 +14,7 @@ database:
   url: jdbc:mysql://{{HOST}}:{{PORT}}/{{DATABASE}}
 ```
   `{{HOST}}`, `{{PORT}}` and `{{DATABASE}}` aren't templates. 
-  You must manually enter the details yourself. Here is an example:
+  You must manually enter the details yourself, like so:
 ```
   url: jdbc:mysql://localhost:3306/minecraft
  
