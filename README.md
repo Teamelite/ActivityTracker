@@ -5,7 +5,7 @@ ActivityTracker is a Minecraft server modification built on the SpigotAPI platfo
 ActivityTracker make's use of Bukkit's Database API which includes Ebean's Object Relational Mapping library.
 This means that a database must be configured within your [ bukkit.yml ] file.
 An example configuration is provided below:
-```
+```yaml
 database:
   username: root
   isolation: SERIALIZABLE
@@ -15,7 +15,7 @@ database:
 ```
   `{{HOST}}`, `{{PORT}}` and `{{DATABASE}}` aren't templates. 
   You must manually enter the details yourself, like so:
-```
+```yaml
   url: jdbc:mysql://localhost:3306/minecraft
  
 ```
