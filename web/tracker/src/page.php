@@ -65,8 +65,6 @@ class Page
      *    |- You can then use those as you please.
      *    |- Time is in milliseconds
      *  }
-     }
-     *
      */
   }
 
