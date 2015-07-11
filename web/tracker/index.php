@@ -19,7 +19,6 @@ ini_set("display_errors", 0);
 // Instantiate the tracker.
 $tracker = new ActivityTracker\Tracker();
 
-
 ?>
 <!DOCTYPE html>
 <html>
