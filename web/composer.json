@@ -1,0 +1,16 @@
+{
+  "name": "ActivityTracker",
+  "version": "1.0.0",
+  "description": "ActivityTracker web-panel to be used in conjunction with the ActivityTracker Minecraft plugin.",
+    "authors": [
+        {
+            "name": "Kieron Wiltshire",
+            "email": "kieron.wiltshire@outlook.com"
+        }
+    ],
+  "autoload": {
+    "psr-4": {
+      "ActivityTracker\\": "tracker/"
+    }
+  }
+}
