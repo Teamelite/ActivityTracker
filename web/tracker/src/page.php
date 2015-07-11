@@ -55,6 +55,17 @@ class Page
      * records supplied in readable form.
      *
      * A nice chart using [ chart.js ] would be nice.
+     * 
+     * example:
+     *  foreach ($records as $rec)
+     *  {
+     *    $date = $rec['date'];
+     *    $time = $rec['time'];
+     * 
+     *    |- You can then use those as you please.
+     *    |- Time is in milliseconds
+     *  }
+     }
      *
      */
   }
