@@ -48,24 +48,47 @@ class Page
    * @return HTML content.
    */
   public static function Graph($records) {
-    /**
-     * TODO
-     *
-     * This method needs to display the information from the
-     * records supplied in readable form.
-     *
-     * A nice chart using [ chart.js ] would be nice.
-     * 
-     * example:
-     *  foreach ($records as $rec)
-     *  {
-     *    $date = $rec['date'];
-     *    $time = $rec['time'];
-     * 
-     *    |- You can then use those as you please.
-     *    |- Time is in milliseconds
-     *  }
-     */
+    $data = '
+      var ctx = document.getElementById("myChart").getContext("2d");
+    ';
+
+    $data .= '
+      var data = {
+        labels: [
+    ';
+
+    // Add the labels:
+    foreach ($records as $rec) {
+      $data .= '\"' . $rec['date'] . '\", ';
+    }
+
+    $data .= '],
+      datasets: [{
+        label: "My First dataset",
+        fillColor: "rgba(220,220,220,0.2)",
+        strokeColor: "rgba(220,220,220,1)",
+        pointColor: "rgba(220,220,220,1)",
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(220,220,220,1)",
+        data: [
+    ';
+
+    // Add the data:
+    foreach ($records as $rec) {
+      $data .= $rec['time'] . ',';
+    }
+
+    $data .= ']
+       }]
+     };
+    ';
+
+    $data .= '
+      var chart = new Chart(ctx).Line(data, Chart.defaults.Line);
+    ';
+
+    return '<script>' . $data . '</script>';
   }
 
 }

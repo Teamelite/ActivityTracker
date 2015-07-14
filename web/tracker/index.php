@@ -25,16 +25,21 @@ $tracker = new ActivityTracker\Tracker();
 <head>
   <title>ActivityTracker</title>
 
-  <!-- Bootstrap stylesheets -->
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
 </head>
 <body>
 
+  <!-- Page content -->
   <?php echo $tracker->page(); ?>
 
-  <!-- Bootstrap script -->
+  <!-- The chart -->
+  <canvas id="chart" width="400" height="400"></canvas>
+
+  <!-- Scripts -->
+  <script src="src/chart.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 </body>
