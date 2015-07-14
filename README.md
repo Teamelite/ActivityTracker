@@ -17,7 +17,7 @@ database:
 ```
   `{{HOST}}`, `{{PORT}}` and `{{DATABASE}}` aren't templates. 
   You must manually enter the details yourself, like so:
-```yaml
+```php
   url: jdbc:mysql://localhost:3306/minecraft
  
 ```
@@ -27,6 +27,6 @@ database:
 The setup for the web-application is fairly straight forward. You should create a folder on your web-server which can be accessed, and then drop the contents of the ```web``` package into the newely created folder.
 Once this has been done, you must then edit the configuration options which can be found within:
 ```php
-  /[folder]/ActivityTracker/Config.php
+  <folder_name>/ActivityTracker/Config.php
 ```
 
