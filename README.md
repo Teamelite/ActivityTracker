@@ -30,3 +30,16 @@ Once this has been done, you must then edit the configuration options which can 
   <folder_name>/ActivityTracker/Config.php
 ```
 
+### Example:
+
+A live demonstration of it can be viewed here:
+http://teamelite.io/tracker/index.php
+
+Example names:
+```php
+  - life855
+  - BeMyZelf
+  - KraZ__
+  - Welshy__
+``
+
