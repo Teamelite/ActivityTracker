@@ -136,7 +136,7 @@ public class ActivityTracker extends JavaPlugin implements Listener {
      *
      * @param player
      */
-    private void track(Player player) {
+    private void track(final Player player) {
         // Attempt to find the User.
         // Execute the query asynchronously
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
@@ -190,7 +190,7 @@ public class ActivityTracker extends JavaPlugin implements Listener {
      *
      * @param user
      */
-    private void save(TrackerUser user, Date date) {
+    private void save(final TrackerUser user, final Date date) {
         // Attempt to get the User.
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
             @Override
