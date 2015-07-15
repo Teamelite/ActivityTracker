@@ -10,31 +10,31 @@ class Config
    */
   public static function get($setting, $key)
   {
-    $config = [
+    $config = array(
 
       /**
        * Application information.
        */
-      'app' => [
+      'app' => array(
         'name'        =>  'ActivityTracker',
         'version'     =>  '1.0.0',
 
         // The URL to the application's root directory, this should not contain a trailling slash. ('/')
         'url'         =>  'http://example.com/tracker'
-      ],
+      ),
 
       /**
        * Database connection information.
        */
-      'mysql' => [
+      'mysql' => array(
         'host'        =>  'localhost',
         'port'        =>  '3306',
         'database'    =>  'minecraft',
         'username'    =>  'root',
-        'password'    =>  ''
-      ],
+        'password'    =>  'secret'
+      ),
 
-    ];
+    );
 
     return $config[$setting][$key];
   }

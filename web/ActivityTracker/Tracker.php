@@ -49,7 +49,8 @@ class Tracker
           }
 
           // Execute the query.
-          $record = $statement->fetchAll()[0];
+          $record = $statement->fetchAll();
+          $record = $record[0];
 
           if ($record != null)
           {
