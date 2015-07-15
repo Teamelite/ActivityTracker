@@ -14,7 +14,7 @@
 // disable error reporting for
 // production purposes.
 error_reporting(E_ALL);
-ini_set("display_errors", 1);
+ini_set("display_errors", 0);
 
 // Instantiate the ActivityTracker.
 $tracker = new ActivityTracker\Tracker();
