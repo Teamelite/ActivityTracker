@@ -2,6 +2,16 @@
 
 > ActivityTracker is a Minecraft server modification built on the SpigotAPI platform. It is used to track a player's level of activity and determine if they're inactive.
 
+#### TODO:
+
+- Seperate dates into a seperate table.
+- Allow the comparing of multiple players in the web view.
+- Refactor the 'web' package to create a more modular codebase.
+- Implement a whitelist and a blacklist.
+- Allow the attaching of other data to the track such as in-game chat and bans.
+- To consider implementing in-game commands for easier tracking.
+- Implement an algorithm for determining whether a player is active.
+
 ### Spigot setup
 
 ActivityTracker make's use of Bukkit's Database API which includes Ebean's Object Relational Mapping library.
